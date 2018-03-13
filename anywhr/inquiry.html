@@ -1,0 +1,208 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="icon" href="../../../../favicon.ico">
+
+    <title>Dashboard Template for Bootstrap</title>
+
+    <!-- Bootstrap core CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+        integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm"
+        crossorigin="anonymous">
+    <link rel="stylesheet" href="//cdn.datatables.net/1.10.16/css/jquery.dataTables.min.css">
+    <!-- Custom styles for this template -->
+    <link href="dashboard.css" rel="stylesheet">
+</head>
+
+<body>
+    <nav class="navbar navbar-dark sticky-top bg-dark flex-md-nowrap p-0">
+        <a class="navbar-brand col-sm-3 col-md-2 mr-0" href="#">Anywhr</a>
+        <ul class="navbar-nav px-3">
+            <li class="nav-item text-nowrap">
+                <a class="nav-link" href="#">Sign out</a>
+            </li>
+        </ul>
+    </nav>
+
+    <div class="container-fluid">
+        <div class="row">
+            <nav class="col-md-2 d-none d-md-block bg-light sidebar">
+                <div class="sidebar-sticky">
+                    <ul class="nav flex-column">
+                        <li class="nav-item">
+                            <a class="nav-link active" href="#">
+                                <span data-feather="home"></span>
+                                Inquiry
+                                <span class="sr-only">(current)</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </nav>
+
+            <main role="main" class="col-md-9 ml-sm-auto col-lg-10 pt-3 px-4">
+                <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-2 mb-3 border-bottom">
+                    <h1 class="h2">Inquiry</h1>
+                </div>
+                <div class="table-responsive">
+                    <table class="table table-striped table-sm" id="inquiry">
+                        <thead>
+                            <tr>
+                                <th>E-mail</th>
+                                <th>Date</th>
+                                <th>Total Packs</th>
+                                <th>Origin</th>
+                                <th>Budget</th>
+                            </tr>
+                        </thead>
+                    </table>
+                </div>
+            </main>
+        </div>
+    </div>
+    <!-- Modal -->
+    <script id="template" type="x-tmpl-mustache">
+        <div class="modal fade" id="itinerary" tabindex="-1" role="dialog" aria-labelledby="itineraryLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="itineraryLabel">Itinerary</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="col-form-label">Recipient:</label>
+                                    <input type="text" class="form-control" readonly value="{{email}}">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="col-form-label">Origin:</label>
+                                    <input type="text" class="form-control" readonly value="{{origin}}">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="col-form-label">Total Packs:</label>
+                                    <input type="text" class="form-control" readonly value="{{totalPacks}}">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="col-form-label">Budget:</label>
+                                    <input type="text" class="form-control" readonly value="{{budget}}">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="col-form-label">Depature At:</label>
+                                    <input type="text" class="form-control" readonly value="{{departDate}}">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="col-form-label">Return At:</label>
+                                    <input type="text" class="form-control" readonly value="{{returnDate}}">
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="col-form-label">Destination to:</label>
+                                    <input type="text" class="form-control" readonly value="{{itinerary.quotation.destination}}">
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-form-label">Flight No:</label>
+                                    <input type="text" class="form-control" readonly value="{{itinerary.quotation.airlineCode}}-{{itinerary.quotation.flightNo}}">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="col-form-label">Hotel At:</label>
+                                    <input type="text" class="form-control" readonly value="{{itinerary.hotelQuotation.name}}">
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-form-label">Total Rooms:</label>
+                                    <input type="text" class="form-control" readonly value="{{itinerary.hotelQuotation.totalRooms}}">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </script>
+    <div id="target"></div>
+
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js"
+        integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+        crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+        integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+        crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
+        integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+        crossorigin="anonymous"></script>
+
+    <!-- Icons -->
+    <script src="https://unpkg.com/feather-icons/dist/feather.min.js"></script>
+    <script src="//cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mustache.js/2.3.0/mustache.min.js"></script>
+    <script src="setting.js"></script>
+    <script>
+        feather.replace()
+        $(function () {
+            const $dataTable = $('#inquiry').DataTable({
+                responsive: true,
+                processing: true,
+                serverSide: true,
+                dom: '<r<t><"row"<"col-md-6"i><"col-md-6"p>>>',
+                ajax: {
+                    url: 'http://travel.test/api/inquiries/list',
+                    method: 'POST',
+                },
+                columns: [
+                    { data: 'email', name: 'email', },
+                    { data: 'date', name: 'date', },
+                    { data: 'total_packs', name: 'total_packs', },
+                    { data: 'origin', name: 'origin', },
+                    { data: 'budget', name: 'budget', },
+                ]
+            });
+            const tableClickHandler = function (e) {
+                const data = $dataTable.row(this).data();
+                $.ajax({
+                    url: `${settings.endpoint}itineraries/${data.id}`,
+                    dataType: 'json',
+                    success(data) {
+                        let template = $('#template').html();
+                        let rendered = Mustache.render(template, data);
+                        let res = $('#target').html(rendered);
+                        $('#itinerary').modal('show');
+                    }
+                })
+            }
+            $('#inquiry tbody').on('click', 'tr', tableClickHandler);
+        })
+    </script>
+</body>
+
+</html>

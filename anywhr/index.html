@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Anywhere - Transform yourself as a real traveler</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+        integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm"
+        crossorigin="anonymous">
+    <link rel="stylesheet" href="main.css">
+    <link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/bootstrap.daterangepicker/2/daterangepicker.css" />
+    <style>
+        #budgets .notActive {
+            color: #3276b1;
+            background-color: #fff;
+        }
+        .autocomplete-suggestions { border: 1px solid #999; background: #FFF; overflow: auto; }
+        .autocomplete-suggestion { padding: 2px 5px; white-space: nowrap; overflow: hidden; }
+        .autocomplete-selected { background: #F0F0F0; }
+        .autocomplete-suggestions strong { font-weight: normal; color: #3399FF; }
+        .autocomplete-group { padding: 2px 5px; }
+        .autocomplete-group strong { display: block; border-bottom: 1px solid #000; }
+    </style>
+</head>
+
+<body class="text-center">
+    <form class="form-travel" id="inquiry">
+        <svg class="icon icon-airplane mb-4 mt-1 text-primary" style="width:72px; height:72px">
+            <use xlink:href="#icon-airplane"></use>
+            <symbol id="icon-airplane" viewBox="0 0 32 32">
+                <title>airplane</title>
+                <path d="M24 19.999l-5.713-5.713 13.713-10.286-4-4-17.141 6.858-5.397-5.397c-1.556-1.556-3.728-1.928-4.828-0.828s-0.727 3.273 0.828 4.828l5.396 5.396-6.858 17.143 4 4 10.287-13.715 5.713 5.713v7.999h4l2-6 6-2v-4l-7.999 0z"></path>
+            </symbol>
+        </svg>
+
+        <h1 class="h4 mb-3 font-weight-normal">How many of you?</h1>
+        <input type="text" class="form-control" name="total_packs" placeholder="Enter number of pack" required autofocus maxlength="2" autocomplete="off">
+        <h1 class="h4 mb-3 mt-3 font-weight-normal">Your traveling date</h1>
+        <input type="text" class="form-control" name="daterange" required>
+        <h1 class="h4 mb-3 mt-3 font-weight-normal">Where are you depart from?</h1>
+        <input type="text" class="form-control" data-trigger="autocomplete" placeholder="Enter your depature city" required>
+        <h1 class="h4 mb-3 mt-3 font-weight-normal d-none h1-budget">Your budget</h1>
+        <div class="input-group d-none">
+            <div id="budgets" class="btn-group">
+                <a class="btn btn-primary active" data-toggle="budget" data-value="1000">SGD 1000</a>
+                <a class="btn btn-primary notActive" data-toggle="budget" data-value="3000">SGD 3000</a>
+                <a class="btn btn-primary notActive" data-toggle="budget" data-value="5000">SGD 5000</a>
+            </div>
+            <input type="hidden" name="budget" id="budget" value="1000">
+        </div>
+        <input type="hidden" name="origin">
+        <button class="btn btn-lg btn-primary btn-block mt-3" type="submit">Submit</button>
+        <p class="mt-3 mb-3 text-muted">&copy; 2017-2018</p>
+    </form>
+
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js"
+        integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+        crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+        integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+        crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
+        integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+        crossorigin="anonymous"></script>
+    <script type="text/javascript" src="//cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
+    <script type="text/javascript" src="//cdn.jsdelivr.net/bootstrap.daterangepicker/2/daterangepicker.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery.devbridge-autocomplete/1.4.7/jquery.autocomplete.min.js"></script>
+    <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+    <script src="setting.js"></script>
+    <script>
+        $(function () {
+            function submitHandler (e) {
+                e.preventDefault();
+                let data = $(this).serializeArray();
+                swal({
+                    text: 'Great! Enter you email to receive our offer',
+                    content: 'input',
+                    button: {
+                        text: 'Submit',
+                        closeModal: false,
+                    },
+                })
+                .then(email => {
+                    
+                    if (! email) throw null;
+                    data.push({
+                        name: 'email',
+                        value: email,
+                    });
+                    
+                    return $.ajax({
+                        url: `${settings.endpoint}inquiries`,
+                        method: 'POST',
+                        dataType: 'json',
+                        data,
+                        success: response => response,
+                        error(err) {
+                            throw err;
+                        }
+                    })
+                })
+                .then(data => {
+                    this.reset();
+                    $('h1.h1-budget, h1.h1-budget + div.input-group').addClass('d-none');
+                    return swal({
+                        title: 'Thank you!',
+                        text: 'You will received our offer soon!',
+                        icon: 'success',
+                    });
+                })
+                .catch(err => {
+                    if (err) {
+                        return swal('Opps!', 'Something wrong, please try again later...', 'error');
+                    }
+                    swal.stopLoading();
+                    swal.close();
+                })
+            }
+
+            function readjustBudget (e, picker) {
+                let {startDate, endDate} = picker;
+                let days = endDate.diff(startDate, 'days');
+                let budgets = [
+                    { price: 1000 },
+                    { price: 3000 },
+                    { price: 5000 },
+                ];
+                $('#budgets > a[data-toggle="budget"]').each((i, element) => {
+                    let price = Math.floor(budgets[i].price * ( 1 + ( Math.floor(days/3) * 0.3 )));
+                    $(element).attr('data-value', price).text(`SGD ${price}`);
+                });
+                $('h1.h1-budget, h1.h1-budget + div.input-group').removeClass('d-none');
+            }
+
+            const autocompleteOptions = {
+                serviceUrl: `${settings.endpoint}iata/autocomplete`,
+                ajaxSettings: {
+                    dataType: 'json',
+                    contentType: "application/json; charset=utf-8",
+                },
+                minChars: 3,
+                transformResult(response) {
+                    return {
+                        suggestions: response.map(item => {
+                            return { value: item.name, data: item.code };
+                        })
+                    };
+                },
+                onSelect(suggestion) {
+                    $('input[name="origin"').val(suggestion.data);
+                }
+            }
+
+            $('input[name="daterange"]').daterangepicker()
+                .on('apply.daterangepicker', readjustBudget);
+            $('#budgets a').on('click', function () {
+                var sel = $(this).attr('data-value');
+                var tog = $(this).attr('data-toggle');
+                $('#' + tog).prop('value', sel);
+
+                $('a[data-toggle="' + tog + '"]').not('[data-value="' + sel + '"]')
+                    .removeClass('active').addClass('notActive');
+                $('a[data-toggle="' + tog + '"][data-value="' + sel + '"]')
+                    .removeClass('notActive').addClass('active');
+            });
+
+            $('[data-trigger="autocomplete"]').autocomplete(autocompleteOptions);
+            $('#inquiry').on('submit', submitHandler);
+        });
+    </script>
+</body>
+
+</html>
